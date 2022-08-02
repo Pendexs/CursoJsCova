@@ -1,5 +1,5 @@
-let nombreUsuario = prompt("Ingresar nombre de usuario");
-let producto = prompt("Indique el producto que desea: diablo - verde- dorado - negro").toUpperCase()
+let usuario = prompt("Ingresar nombre de usuario");
+let producto = prompt("Indique el producto que desea: \n\n diablo \n\n verde \n\n dorado \n\n negro").toUpperCase()
 let cantidad = prompt("Cuantos desea?")
 let consumidorFinal = prompt("Consumidor final?").toUpperCase();
 
@@ -13,24 +13,31 @@ class Producto {
  }
   
   const DIABLO = new Producto("diablo", 800);
-  const VERDE = new Producto("verde", 400);
-  const DORADO = new Producto("dorado", 300);
-  const NEGRO = new Producto("negro", 600);
+  const verde = new Producto("verde", 400);
+  const dorado = new Producto("dorado", 300);
+  const negro = new Producto("negro", 600);
 
+  const Productos = [DIABLO, verde, dorado, negro] // Array de productos
+  const Usuarios = []  // Lo uso para poder aplicar Push
 
 //FUNCIONES
 const fmultiplicacion = (numeroA, numeroB) => precio = numeroA * numeroB;
 
 const fiva = (numero) => sinIva = numero / 1.21;
 
+function AgregarUsuario(usuario){
+  Usuarios.push(usuario);  // Funcion para pushear usuario
+}
+
 
 // LOGIN
 
-if (nombreUsuario == "ivan") {
+if (usuario == "ivan") {
     alert("Hola Admin");
 }
 else {
-    console.log ("Hola " + nombreUsuario + " bienvenido/a");
+    console.log ("Hola " + usuario + " bienvenido/a");
+    AgregarUsuario(usuario)  // Uso Push
 }
 
 // COMPRA
@@ -87,4 +94,6 @@ else {
     console.log ("Muchas gracias por su compra")
     }   
   
+  console.log (Productos)
+  console.log (Usuarios)
   
