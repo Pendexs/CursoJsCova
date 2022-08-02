@@ -13,11 +13,11 @@ class Producto {
  }
   
   const DIABLO = new Producto("diablo", 800);
-  const verde = new Producto("verde", 400);
-  const dorado = new Producto("dorado", 300);
-  const negro = new Producto("negro", 600);
+  const VERDE = new Producto("verde", 400);
+  const DORADO = new Producto("dorado", 300);
+  const NEGRO = new Producto("negro", 600);
 
-  const Productos = [DIABLO, verde, dorado, negro] // Array de productos
+  const Productos = [DIABLO, VERDE, DORADO, NEGRO] // Array de productos
   const Usuarios = []  // Lo uso para poder aplicar Push
 
 //FUNCIONES
