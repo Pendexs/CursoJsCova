@@ -1,68 +1,100 @@
-let usuario = prompt("Ingresar nombre de usuario");
+const carrito = []  // ARRAY carrito
 
 
-const carrito = []
-
-class producto {
+class producto {   // CREADOR de productos/objetos
     
-    constructor( nombre, precio) {
+    constructor(id, nombre, precio, cantidad) {
+      this.id = id;
       this.nombre = nombre;
       this.precio = precio;
+      this.cantidad = cantidad;
+
     }
  }
   
-  const diablo = new producto("diablo", 800);
-  const verde = new producto("verde", 400);
-  const dorado = new producto("dorado", 300);
-  const negro = new producto("negro", 600);
+  const diablo = new producto(1, "diablo", 800, 1);
+  const verde = new producto(2, "verde", 400, 1);
+  const dorado = new producto(3, "dorado", 300, 1);
+  const negro = new producto(4, "negro", 600, 1);
 
   const productos = [diablo, verde, dorado, negro] // Array de productos
-  const Usuarios = []  // Lo uso para poder aplicar Push
 
+  let totalCarrito 
 //FUNCIONES
-const fmultiplicacion = (numeroA, numeroB) => precio = numeroA * numeroB;
 
+function agregarCarrito (h3Producto) // Funcion para agregar al carrito
+ {
+ 
 
-function AgregarUsuario(usuario){
-  Usuarios.push(usuario);  // Funcion para pushear usuario
+  let select = document.getElementById(h3Producto)  // Selecciono segun el titulo que tenga en el HTML 
+  let productoelegido = select.innerHTML  
+  
+  
+  const seleccion = productos.find((producto) => producto.nombre === productoelegido)  // Buscador por nombre
+  
+  if (carrito.find ((carritoArray) => carritoArray.id === seleccion.id)){ // Chequeo si esta el producto agregado, si lo esta aumento cantidad + 1, si no esta pusheo
+    seleccion.cantidad += 1}
+    
+  else carrito.push(seleccion);
+
+  const obtenerTotal = (productosArray) => {     //Calculo el Total $$ multiplico cantidad por precio de cada objeto en el Array del carrito
+      let total = 0;
+    productosArray.forEach((producto) => {
+        total += producto.precio * producto.cantidad;
+    });
+    return total;
+  }
+
+  console.log('TOTAL: ' , obtenerTotal(carrito));  // Muestro el total
+
+totalCarrito = obtenerTotal(carrito)
 }
 
 
 
-//LOGIN
 
-if (usuario == "ivan") {
-  alert("Hola Admin");
-}
-else {
-  console.log ("Hola " + usuario + " bienvenido/a");
-  AgregarUsuario(Usuarios)  // Uso Push
-}
+//BOTONES
 
+const bCompraDiablo = document.querySelector("#bCompraDiablo") 
+const bCompraVerde = document.querySelector("#bCompraVerde") 
+const bCompraDorado = document.querySelector("#bCompraDorado") 
+const bCompraNegro = document.querySelector("#bCompraNegro") 
+const bConfirmar = document.querySelector("#bConfirmar")
 
 
-function AgregarCarrito (){  // COMPRAS
+// Opcion de compras por producto, acciona funcion agregarCarrito
+bCompraDiablo.addEventListener("click", () => {
+agregarCarrito ("h3diablo")
+});
 
-let productoelegido = prompt("Indique el producto que desea: \n\n diablo \n\n verde \n\n dorado \n\n negro").toLowerCase()
-let cantidad = prompt("Cuantos desea?")
+bCompraVerde.addEventListener("click", () => {
+agregarCarrito ("h3verde")
+});
 
-let continuar = prompt ("Deesea continuar comprando").toLowerCase()
+bCompraDorado.addEventListener("click", () => {
+agregarCarrito ("h3dorado")
+});
 
-const seleccion = productos.find((el) => el.nombre === productoelegido)  // Buscador por nombre
-
-console.log(seleccion)
-
-fmultiplicacion(seleccion.precio, cantidad); // Funcion para calcular precio por cantidad
-
-console.log("total " + precio)
-
-carrito.push(seleccion.nombre,seleccion.precio * cantidad); // Agrego al carrito Nombre y valor de cantidad por precio
-
-if (continuar == "si") {AgregarCarrito()}
-
-}
-
-AgregarCarrito()
+bCompraNegro.addEventListener("click", () => {
+agregarCarrito ("h3negro")
+});
 
 
-console.log (carrito)
+
+function confirmar(){   // Creo en el HTML el total a pagar, se activa al hacer click
+
+
+  let lista = document.getElementById("lista");
+
+  let li = document.createElement("li");
+  li.innerHTML = "El total es $" + totalCarrito;
+
+  lista.appendChild(li);
+
+
+  }
+bConfirmar.addEventListener("click", () =>{
+  confirmar() })
+
+    
+console.log(carrito)
