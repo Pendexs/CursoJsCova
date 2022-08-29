@@ -1,22 +1,19 @@
 const carrito = []  // ARRAY carrito
-
-
 class producto {   // CREADOR de productos/objetos
     
-    constructor(id, nombre, precio, cantidad, imagen, boton) {
+    constructor(id, nombre, precio, cantidad, imagen) {
       this.id = id;
       this.nombre = nombre;
       this.precio = precio;
       this.cantidad = cantidad;
       this.imagen = imagen;
-      this.boton = boton;
     }
  }
   
-  const diablo = new producto("1", "diablo", 800, 1, "https://http2.mlstatic.com/D_NQ_NP_2X_929142-MLA45343464483_032021-F.webp", "b1"); 
-  const verde = new producto("2", "verde", 400, 1, "https://images.cults3d.com/Sc4hyz-V2GaCf_iNb9xvcnkcGvY=/516x516/https://files.cults3d.com/uploaders/18131720/illustration-file/23e0b840-2e1c-4537-9f2e-0db7c42d1159/grinder.jpg#1", "b2") ;
-  const dorado = new producto(3, "dorado", 300, 1, "https://files.cults3d.com/uploaders/14629481/illustration-file/09bf3f5b-198c-489e-9c8c-b8318ebb9e4f/IMG-20210728-WA0008.jpg", "b3");
-  const negro = new producto(4, "negro", 600, 1, "https://img2.cgtrader.com/items/2890504/c1f8405e3d/spirited-away-kaonashi-no-face-herb-grinder-3d-model-3ds-stl.jpg", "b4");
+  const diablo = new producto(1, "Diablo", 800, 1, "https://http2.mlstatic.com/D_NQ_NP_2X_929142-MLA45343464483_032021-F.webp"); 
+  const verde = new producto(2, "Verde", 400, 1, "https://images.cults3d.com/Sc4hyz-V2GaCf_iNb9xvcnkcGvY=/516x516/https://files.cults3d.com/uploaders/18131720/illustration-file/23e0b840-2e1c-4537-9f2e-0db7c42d1159/grinder.jpg#1") ;
+  const dorado = new producto(3, "Dorado", 300, 1, "https://images.squarespace-cdn.com/content/v1/59d5f200bebafbe0830d4c9b/1562664238015-SLASGUM3BP5O28MA4AAW/Grinder-solid-8-gold-open.jpg?format=1000w");
+  const negro = new producto(4, "Negro", 600, 1, "https://img2.cgtrader.com/items/2890504/c1f8405e3d/spirited-away-kaonashi-no-face-herb-grinder-3d-model-3ds-stl.jpg");
 
   const productos = [diablo, verde, dorado, negro] // Array de productos
 
@@ -27,37 +24,78 @@ productos.forEach((producto) => {
   productosJS.innerHTML += `
     <article class="card transparante" style="width: 20%;">
         <div class="card-body">
-            <h3 id="${producto.id}">${producto.nombre}</h3>
+            <h3>${producto.nombre}</h3>
             <img class = "trein" src=${producto.imagen}  alt="">
             <p class="card-text">$ ${producto.precio}</p>
-            <p class="card-text">${producto.cantidad}</p>
-            <a href="#" class="botonCompra">Comprar</a>
+            <a href="#" id="boton${producto.id}">Comprar</a>
         </div>
     </article>
     `
+
+    
+}
+)
+
+productos.forEach((producto) => {                   //Uso un forEach para los botones de compra
+  let botonCompra = document.getElementById(`boton${producto.id}`)
+  botonCompra.addEventListener('click', () => {
+      agregarCarrito (producto.id)
+      Toastify({
+        text: `${producto.nombre} agregado al carrito  😉`,
+        duration: 3000,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+      
+        style: {
+          background: "linear-gradient(to right, #D35400, #2E4053)",
+          fontSize: "10px",
+        },
+        onClick: function(){} // Callback after click
+      }).showToast();
+  }
+  )
 })
 
-
-  
 //FUNCIONES
-let botonCompra = document.querySelectorAll(".botonCompra") // Busco los botones compra que se generen en HTML
-
-for(let botones of botonCompra){ // Asigno un boton por siclo para poder seleccionar productos
-  botones.addEventListener("click", boton)
-}
-
-function boton (e){ // Funcion para agregar al carrito
-  let hijo = e.target // Uso target para saber que selecciono
-  let padre = hijo.parentNode.parentNode //busco al contenedor del nombre del producto
-
-  let productoelegido = padre.querySelector("h3").textContent // Uso el nombre del titula H3 como valor para buscar
-
-  const seleccion = productos.find((producto) => producto.nombre === productoelegido)  // Buscador por nombre
+function agregarCarrito (idProducto) // Funcion para agregar al carrito
+ {
+ 
+  let select = idProducto  // Selecciono segun el ID
+  let productoelegido = select
   
+
+  const seleccion = productos.find((producto) => producto.id === productoelegido)  // Buscador por ID
+  
+
   if (carrito.find ((carritoArray) => carritoArray.id === seleccion.id)){ // Chequeo si esta el producto agregado, si lo esta aumento cantidad + 1, si no esta pusheo
-    seleccion.cantidad += 1}
+    seleccion.cantidad += 1
+
+    const cantidad = document.getElementById(`cantidad${seleccion.id}`)
+
+    cantidad.innerHTML = `$ ${seleccion.precio} x${seleccion.cantidad}`
     
-  else carrito.push(seleccion);
+ }
+    
+  else {carrito.push(seleccion);
+
+    const carritoH3 = document.getElementById("carritoH3")
+    carritoH3.innerHTML = `Carrito  <img src="./mult/iconos/agregar.ico" alt=""> `
+
+
+
+    const carritoJS = document.getElementById("tbody")
+
+
+    carritoJS.innerHTML += `
+    <article class="card transparante" style="width: 22%; margin-top: 5px;">
+        <div class="card-body">
+            <h6>${seleccion.nombre}             <button class="botonEliminar" id="botonEliminar${producto.id}"><img class = "trein" src="./mult/iconos/eliminar.ico"  alt=""></button></h6>
+            <img class = "trein" src=${seleccion.imagen}  alt="">
+            <p class="card-text" id="cantidad${seleccion.id}">$ ${seleccion.precio} x${seleccion.cantidad}</p>
+        </div>
+    </article>
+    `}
 
   const obtenerTotal = (productosArray) => {     //Calculo el Total $$ multiplico cantidad por precio de cada objeto en el Array del carrito
       let total = 0;
@@ -65,13 +103,17 @@ function boton (e){ // Funcion para agregar al carrito
         total += producto.precio * producto.cantidad;
     });
     return total;
+  
   }
-
-  console.log('TOTAL: ' , obtenerTotal(carrito));  // Muestro el total
-
+  
 totalCarrito = obtenerTotal(carrito)
 
 
+console.log('TOTAL: ' , obtenerTotal(carrito));  // Muestro el total
+
+let lista = document.getElementById("precioFinal");
+
+lista.innerHTML = "El total es $" + totalCarrito;
 
 
 let carritoJSON = JSON.stringify (carrito)  // Agrego al almacenamiento local el carrito en forma de String y el total de la compra
@@ -79,34 +121,6 @@ let carritoJSON = JSON.stringify (carrito)  // Agrego al almacenamiento local el
 localStorage.setItem("Carrito", carritoJSON )
 localStorage.setItem("Total", obtenerTotal(carrito))
 }
-
-
-
-// Finalizar compra
-
-function confirmar(){   // Creo en el HTML el total a pagar, se activa al hacer click
-
-
-  let lista = document.getElementById("lista");
-
-  let li = document.createElement("li");
-  li.innerHTML = "El total es $" + totalCarrito;
-
-  lista.appendChild(li);
-
-
-  }
-bConfirmar.addEventListener("click", () =>{
-  confirmar() })
-
     
 console.log(carrito)
-
-
-
-
-
-
-
-
 
