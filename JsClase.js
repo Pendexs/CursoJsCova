@@ -40,14 +40,12 @@ class producto {   // CREADOR de productos/objetos
 }
 )
 }
-
   mostrarProductosDOM()
 
 
 productos.forEach((producto) => { //Uso un forEach para los botones de compra y saber que agrego al carrito
   let botonCompra = document.getElementById(`boton${producto.id}`)
   botonCompra.addEventListener('click', () => {
-    console.log(producto.id)
     agregarCarrito(producto.id)
     Toastify({
       text: `${producto.nombre} agregado al carrito  😉`,
@@ -70,7 +68,7 @@ productos.forEach((producto) => { //Uso un forEach para los botones de compra y 
   function agregarCarrito (idProducto) // Funcion para agregar al carrito
  {
 
-  function agregarChequeadoProducto (idProducto){  //Verfico si se encuentra el producto ya en el carrito para agregar cantidad o todo el producto
+  function agregadoYChequeadoProducto (idProducto){  //Verfico si se encuentra el producto ya en el carrito para agregar cantidad o todo el producto
 
   const seleccion = productos.find((producto) => producto.id === idProducto)  // Buscador por ID
 
@@ -88,11 +86,12 @@ productos.forEach((producto) => { //Uso un forEach para los botones de compra y 
 
     
  }
-
- else {carrito.push(seleccion);   // Si no esta agregado el producto al carrito, Pinto todo en HTML y agrego al carrito
+    
+  else {carrito.push(seleccion);   // Si no esta agregado el producto al carrito, Pinto todo en HTML y agrego al carrito
 
     const carritoH3 = document.getElementById("carritoH3")
     carritoH3.innerHTML = `Carrito  <img src="./mult/iconos/agregar.ico" alt=""> `
+
 
     const carritoJS = document.getElementById("tbody")
 
@@ -102,29 +101,20 @@ productos.forEach((producto) => { //Uso un forEach para los botones de compra y 
         <div class="card-body">
             <h6>${seleccion.nombre}             <button id="botonEliminar${seleccion.id}"><img class = "trein" src="./mult/iconos/eliminar.ico"  alt=""></button></h6>
             <img class = "trein" src=${seleccion.imagen}  alt="">
-            <p class="card-text" id="cantidad${seleccion.id}">${divisa} ${seleccion.precio} x${seleccion.cantidad}</p> 
+            <p class="card-text" id="cantidad${seleccion.id}">${divisa} ${seleccion.precio} x${seleccion.cantidad}</p>
         </div>
     </article>
     `
-    
-
-    //${divisa} ${seleccion.precio} x${seleccion.cantidad}
-    const cantidad = document.getElementById(`cantidad${seleccion.id}`)
-
-    cantidad.innerHTML = `${divisa} ${seleccion.precio} x${seleccion.cantidad}`
 
     localStorage.setItem("itemsGuardados", JSON.stringify(carrito))
 
   }
 
 }
-
-agregarChequeadoProducto (idProducto)
-
+agregadoYChequeadoProducto (idProducto)
 
 
-
-  const obtenerTotal = (productosArray) => {     //Calculo el Total $$ multiplico cantidad por precio de cada objeto en el Array del carrito
+ const obtenerTotal = (productosArray) => {     //Calculo el Total $$ multiplico cantidad por precio de cada objeto en el Array del carrito
       let total = 0;
     productosArray.forEach((producto) => {
         total = carrito.reduce((x, e) => x + (e.precio * e.cantidad), 0)
@@ -134,7 +124,8 @@ agregarChequeadoProducto (idProducto)
   
   }
 
-
+eliminarDelCarrito ()
+function eliminarDelCarrito (){
   carrito.forEach((seleccion) => { //PARA ELIMINAR DEL CARRITO
   let botonEliminar = document.getElementById(`botonEliminar${seleccion.id}`)
   botonEliminar.addEventListener('click', () => {
@@ -142,7 +133,6 @@ agregarChequeadoProducto (idProducto)
   
 
       const elimino = seleccion // Buscador por producto
-      console.log(elimino.cantidad)
       totalCarrito = totalCarrito - elimino.cantidad * elimino.precio
 
       let SeElimina = carrito.indexOf(elimino)  //Busco el indice del Objeto Producto en el Array Carrito
@@ -158,22 +148,17 @@ agregarChequeadoProducto (idProducto)
       console.log(totalCarrito)   
       let lista = document.getElementById("precioFinal");
 
-      lista.innerHTML = "El total es $" + totalCarrito + `<button id="finalizarCompra">OK</button>`
+      lista.innerHTML = "El total es " + divisa + totalCarrito
 
       localStorage.setItem("itemsGuardados", JSON.stringify(carrito))
-
-
    })
   })
+}
+
+totalCarrito = obtenerTotal(carrito) // Variable con total carrito
 
 
-totalCarrito = obtenerTotal(carrito)
-
-
-
-// console.log('TOTAL: ' , obtenerTotal(carrito));  // Muestro el total
-
-let lista = document.getElementById("precioFinal");
+let lista = document.getElementById("precioFinal");  // Paraincertar en DOM precio total del carrito
 
 lista.innerHTML = "El total es " + divisa + totalCarrito + `<button class="btn btn-outline-success" id="finalizarCompra">Confirmar compra</button>`
 finalizarCompra ()
@@ -216,27 +201,30 @@ console.log(productos)
 console.log(carrito)
 
 
-
-
-fetch('https://criptoya.com/api/dolar')
+fetch('https://criptoya.com/api/dolar')  //Uso de Fetch para poder mostar precios en Dolar oficial tiempo real
     .then( response => response.json() )
     .then (({oficial}) => {
+
+
 
 const dolarizar = document.getElementById("dolarizar") // Para convertir precios a dolar oficial
 
 function dolarizando (){
 dolarizar.addEventListener('click', () => {
-
-  productos.forEach((producto) => {
+  dolarizar.disabled = true   //Habilito y desabilito el boton, depende que cotizacion este activa
+  pesificar.disabled = false
+   
+  productos.forEach((producto) => {   //Recorro los productos para modificarlos en el DOM y cada uno
     producto.precio = (producto.precio/oficial).toFixed(2)
 
-    let preciodolar = `USD ${producto.precio}
+    let preciodolar = `${divisa} ${producto.precio}
     `
     let dolar =document.getElementById(`dolar${producto.id}`)
     dolar.innerHTML= preciodolar
     divisa = "USD"
-
   })
+ recorrerCarritoCambiaMoneda()
+  
 
   })
 }
@@ -244,21 +232,39 @@ dolarizando()
 
   
   const pesificar = document.getElementById("pesificar") // Convertir precios a Pesos
+  pesificar.disabled = true
+
 
 function pesificando (){
+
+
+
   pesificar.addEventListener('click', () => {
+    dolarizar.disabled = false
+    pesificar.disabled = true
 
   productos.forEach((producto) => {
     producto.precio = (producto.precio*oficial).toFixed(0 )
     
-    let preciodolar = `$ ${producto.precio}
+    let preciodolar = `${divisa} ${producto.precio}
     `
+
     let dolar =document.getElementById(`dolar${producto.id}`)
     dolar.innerHTML= preciodolar
     divisa = "$"
+
+    recorrerCarritoCambiaMoneda ()
   })
 
   })
 }
 pesificando ()
     })
+
+    function recorrerCarritoCambiaMoneda(){ // Funcion creada para poder modificar los precios en carrito segun pesos o dolar
+      carrito.forEach((producto) => {
+        const cantidad = document.getElementById(`cantidad${producto.id}`)
+      
+       cantidad.innerHTML = `${divisa} ${producto.precio} x${producto.cantidad}`
+        })
+    }
